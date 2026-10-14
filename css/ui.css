@@ -1,0 +1,156 @@
+/* Portaaljacht – vensters in blokkenspel-stijl: puzzel, winkel, schat, munten */
+
+.mcpanel {
+  background: #c6c6c6;
+  color: #3f3f3f;
+  border: 3px solid #000;
+  box-shadow: inset 3px 3px 0 #fff, inset -3px -3px 0 #555;
+  padding: 12px 16px 14px;
+  width: min(560px, 94vw);
+  max-height: calc(100% - 8px); overflow-y: auto;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  text-shadow: none;
+}
+.mcpanel-title { font-size: 28px; line-height: 1; color: #3f3f3f; align-self: flex-start; }
+
+.mcbtn.small { width: auto; min-width: 140px; padding: 0 16px; height: 42px; font-size: 24px; }
+.mcbtn.tiny { width: auto; min-width: 96px; padding: 0 10px; height: 40px; font-size: 22px; flex: none; }
+.mcbtn:disabled { background: #5a5a5a; color: #a0a0a0; box-shadow: inset 2px 2px 0 #6e6e6e, inset -2px -3px 0 #3c3c3c; cursor: default; transform: none; }
+
+/* ---- puzzels ---- */
+.puz-msg { font-size: 24px; line-height: 1.1; min-height: 2.2em; text-align: center; color: #2a2a2a; }
+.puz-board { display: grid; gap: 8px; touch-action: manipulation; }
+.puz-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.puz-cell {
+  border: 3px solid #000; padding: 0; cursor: pointer; font-family: var(--ui-font);
+  box-shadow: inset 3px 3px 0 rgba(255,255,255,0.35), inset -3px -3px 0 rgba(0,0,0,0.35);
+  touch-action: manipulation; color: #fff;
+}
+.puz-sequence { grid-template-columns: repeat(2, min(120px, 22vh)); }
+.puz-cell.pad { width: min(120px, 22vh); height: min(120px, 22vh); filter: brightness(0.55); transition: filter 0.08s; }
+.puz-cell.pad.lit { filter: brightness(1.35); }
+.pad-rood { background: #c62828; } .pad-geel { background: #f2c618; } .pad-groen { background: #3fa82f; } .pad-blauw { background: #2f5fd8; }
+
+.puz-lights { grid-template-columns: repeat(3, min(88px, 16vh)); }
+.puz-cell.lamp { width: min(88px, 16vh); height: min(88px, 16vh); background: #4a2a12;
+  background-image: linear-gradient(45deg, rgba(0,0,0,0.25) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 75%); background-size: 22px 22px; }
+.puz-cell.lamp.lit { background-color: #ffd65a; box-shadow: 0 0 18px #ffcc33, inset 3px 3px 0 #fff6c0, inset -3px -3px 0 #b8860b; }
+
+.puz-memory { grid-template-columns: repeat(4, min(70px, 12vh)); }
+.puz-cell.mem { width: min(70px, 12vh); height: min(70px, 12vh); background: #1c1424; }
+.puz-cell.mem.lit { background: #b46cff; box-shadow: 0 0 14px #b46cff; }
+.puz-cell.mem.good { background: #3fbf5f; }
+.puz-cell.mem.bad { background: #d23a3a; }
+
+.puz-slide { grid-template-columns: repeat(3, min(84px, 16vh)); gap: 3px; background: #555; padding: 3px; border: 3px solid #000; }
+.puz-cell.slide { width: min(84px, 16vh); height: min(84px, 16vh); background-size: 300% 300%; image-rendering: pixelated;
+  font-size: 22px; display: flex; align-items: flex-start; justify-content: flex-start; padding: 2px 6px; text-shadow: 2px 2px 0 #000; }
+.puz-cell.slide.empty { background: #2b2b2b; box-shadow: none; border-color: #2b2b2b; }
+
+.puz-pairs { grid-template-columns: repeat(4, min(72px, 15vh)); }
+.puz-cell.card {
+  width: min(72px, 15vh); height: min(72px, 15vh); background-color: #6b4a2a;
+  background-size: 70% 70%; background-position: center; background-repeat: no-repeat; image-rendering: pixelated;
+  background-image: none;
+}
+.puz-cell.card:not(.up):not(.peek) { background-image: repeating-linear-gradient(45deg, #7a5532 0 6px, #6b4a2a 6px 12px); }
+.puz-cell.card.up, .puz-cell.card.peek { background-color: #e8e0c8; }
+.puz-cell.card.good { background-color: #9be08a; }
+
+.puz-cell.hinted { animation: hintblink 0.45s steps(2) infinite; }
+@keyframes hintblink { 0% { outline: 4px solid #fff; } 100% { outline: 4px solid #ff3; } }
+
+/* ---- schat ---- */
+.loot-panel { width: min(380px, 90vw); }
+.loot-row { display: flex; align-items: center; gap: 12px; font-size: 40px; color: #2a2a2a; }
+.loot-row img { width: 48px; height: 48px; image-rendering: pixelated; }
+.loot-label { font-size: 26px; color: #555; }
+
+/* ---- winkel ---- */
+.shop-panel { width: min(640px, 96vw); }
+.shop-wallet { display: flex; gap: 18px; font-size: 28px; align-self: stretch; justify-content: center; color: #2a2a2a; }
+.wal { display: inline-flex; align-items: center; gap: 4px; }
+.wal img { width: 26px; height: 26px; image-rendering: pixelated; }
+.shop-tabs { display: flex; gap: 6px; align-self: stretch; }
+.shop-tab {
+  flex: 1; height: 38px; font-family: var(--ui-font); font-size: 22px; cursor: pointer;
+  background: #8b8b8b; color: #fff; text-shadow: 2px 2px 0 #3f3f3f; border: 2px solid #000;
+  box-shadow: inset 2px 2px 0 #aaa, inset -2px -2px 0 #555;
+}
+.shop-tab.sel { background: #c6c6c6; color: #3f3f3f; text-shadow: none; }
+.shop-list {
+  align-self: stretch; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+  max-height: min(46vh, 340px); padding: 4px; background: #8b8b8b;
+  border: 2px solid #373737; box-shadow: inset 2px 2px 0 #373737, inset -2px -2px 0 #fff;
+  touch-action: pan-y;
+}
+.shop-row {
+  display: flex; align-items: center; gap: 10px; padding: 6px 8px; background: #c6c6c6;
+  border: 2px solid #555; min-width: 0;
+}
+.shop-row.poor { opacity: 0.75; }
+.shop-icon { width: 44px; height: 44px; image-rendering: pixelated; flex: none; background: #8b8b8b; border: 2px solid #373737; padding: 2px; }
+.shop-mid { flex: 1; min-width: 0; text-align: left; }
+.shop-name { font-size: 24px; line-height: 1; color: #2a2a2a; }
+.shop-stat { font-size: 18px; line-height: 1.05; color: #555; }
+.shop-price { font-size: 22px; line-height: 1; display: flex; gap: 10px; color: #2a2a2a; margin-top: 2px; }
+.shop-price .wal img { width: 20px; height: 20px; }
+.shop-note { font-size: 20px; color: #2a2a2a; min-height: 1.1em; text-align: center; }
+
+/* ---- munten/diamanten in beeld ---- */
+#wallet {
+  position: absolute; right: calc(12px + var(--safe-r)); top: calc(136px + var(--safe-t));
+  display: flex; flex-direction: column; gap: 2px; align-items: flex-end;
+  font-size: 24px; text-shadow: 2px 2px 0 #3f3f3f;
+}
+#wallet .wal img { width: 22px; height: 22px; }
+body.touch #wallet { right: calc(158px + var(--safe-r)); }
+#armorbar { display: flex; align-self: flex-start; gap: 1px; margin: 0 0 2px 2px; min-height: 2px; }
+#armorbar .armor { width: calc(var(--slot) * 0.42); height: calc(var(--slot) * 0.38); background-size: 100% 100%; image-rendering: pixelated; }
+.slot .count {
+  position: absolute; right: 3px; bottom: 0; font-size: 20px; line-height: 1;
+  text-shadow: 2px 2px 0 #3f3f3f; color: #fff;
+}
+.slot.locked canvas { opacity: 0.25; }
+
+@media (max-height: 430px) {
+  .mcpanel { padding: 8px 12px 10px; gap: 6px; }
+  .puzzle-panel { display: grid; grid-template-columns: auto auto; grid-template-areas: 'title title' 'board msg' 'board btns'; align-items: center; column-gap: 18px; width: auto; }
+  .puzzle-panel .mcpanel-title { grid-area: title; }
+  .puzzle-panel .puz-board { grid-area: board; }
+  .puzzle-panel .puz-msg { grid-area: msg; max-width: 240px; align-self: end; }
+  .puzzle-panel .puz-buttons { grid-area: btns; flex-direction: column; align-self: start; }
+  .puz-lights { grid-template-columns: repeat(3, min(88px, 21vh)); }
+  .puz-cell.lamp { width: min(88px, 21vh); height: min(88px, 21vh); }
+  .puz-memory { grid-template-columns: repeat(4, min(70px, 16vh)); gap: 6px; }
+  .puz-cell.mem { width: min(70px, 16vh); height: min(70px, 16vh); }
+  .puz-slide { grid-template-columns: repeat(3, min(84px, 22vh)); }
+  .puz-cell.slide { width: min(84px, 22vh); height: min(84px, 22vh); }
+  .puz-sequence { grid-template-columns: repeat(2, min(120px, 30vh)); }
+  .puz-pairs { grid-template-columns: repeat(4, min(72px, 19vh)) !important; gap: 6px; }
+  .puz-cell.card { width: min(72px, 19vh); height: min(72px, 19vh); }
+  .puz-pairs.many { grid-template-columns: repeat(4, min(64px, 15vh)) !important; gap: 5px; }
+  .puz-pairs.many .puz-cell.card { width: min(64px, 15vh); height: min(64px, 15vh); }
+  .puz-cell.pad { width: min(120px, 30vh); height: min(120px, 30vh); }
+  .mcpanel-title { font-size: 24px; }
+  .puz-msg { font-size: 20px; min-height: 1.2em; }
+  .shop-panel {
+    display: grid; grid-template-columns: minmax(150px, 210px) 1fr; width: min(820px, 96vw);
+    grid-template-areas: 'title list' 'wallet list' 'tabs list' 'note list' 'close list';
+    grid-template-rows: auto auto auto 1fr auto; column-gap: 12px; align-items: start;
+  }
+  .shop-panel .mcpanel-title { grid-area: title; font-size: 22px; }
+  .shop-wallet { grid-area: wallet; flex-wrap: wrap; gap: 6px 12px; font-size: 22px; justify-content: flex-start; }
+  .shop-tabs { grid-area: tabs; flex-direction: column; }
+  .shop-tab { height: 34px; }
+  .shop-note { grid-area: note; font-size: 18px; text-align: left; }
+  #shop-close { grid-area: close; }
+  .shop-list { grid-area: list; max-height: calc(100vh - 44px); align-self: stretch; }
+  .shop-name { font-size: 21px; }
+  .shop-stat { font-size: 16px; }
+  .loot-row { font-size: 32px; }
+  #wallet { top: calc(112px + var(--safe-t)); font-size: 21px; }
+}
+@media (orientation: portrait) {
+  body.touch #wallet { right: 12px; top: calc(166px + var(--safe-t)); }
+}

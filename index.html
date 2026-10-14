@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1b1b1b">
+<meta name="description" content="Portaaljacht – een blokkenavontuur: vind de portalen, versla de schurken en vind hun schatten.">
+<title>Portaaljacht</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Portaaljacht">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/ui.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- ===== HUD ===== -->
+<div id="hud" class="hidden">
+  <div id="crosshair"></div>
+  <div id="objective"><div class="obj-label">DOEL</div><div id="obj-text"></div><div id="obj-tip"></div></div>
+  <div id="compass-wrap"><canvas id="compass" width="16" height="16"></canvas><div id="compass-label">Portaal</div><div id="compass-dist"></div></div>
+  <div id="bossbar" class="hidden"><div id="boss-name">De Lavareus</div><div id="boss-track"><div id="boss-fill"></div><div id="boss-notches"></div></div></div>
+  <div id="chat"></div>
+  <div id="actionbar"></div>
+  <div id="titles"><div id="title-main"></div><div id="title-sub"></div></div>
+  <div id="bottom-bar">
+    <div id="item-name"></div>
+    <div id="hearts"></div>
+    <div id="hotbar"></div>
+  </div>
+</div>
+
+<!-- schermeffecten -->
+<div id="fx-portal" class="fx"></div>
+<div id="fx-hurt" class="fx"></div>
+<div id="fx-fire" class="fx"></div>
+<div id="fx-water" class="fx"></div>
+<div id="fx-frost" class="fx"></div>
+<div id="fx-dark" class="fx"></div>
+
+<!-- ===== Aanraakbesturing ===== -->
+<div id="touch" class="hidden">
+  <div id="joy-base"><div id="joy-knob"></div></div>
+  <button class="tbtn" id="btn-pause" aria-label="Pauze">II</button>
+  <button class="tbtn" id="btn-place" aria-label="Bouwen"><span>BOUW</span></button>
+  <button class="tbtn" id="btn-attack" aria-label="Slaan of breken"><span>SLA</span></button>
+  <button class="tbtn" id="btn-jump" aria-label="Springen"><span>&#9650;</span></button>
+</div>
+
+<!-- ===== Schermen ===== -->
+<div id="screen-loading" class="screen dirt">
+  <div class="load-title" id="load-title">Wereld genereren</div>
+  <div class="load-sub" id="load-sub">Blokken stapelen...</div>
+  <div class="load-bar"><div id="load-fill"></div></div>
+</div>
+
+<div id="screen-menu" class="screen hidden">
+  <div class="logo-wrap">
+    <h1 class="logo">PORTAAL<br>JACHT</h1>
+    <div id="splash">Zoek het portaal!</div>
+  </div>
+  <div class="menu-buttons">
+    <button class="mcbtn hidden" id="btn-continue">Verder spelen</button>
+    <button class="mcbtn" id="btn-play">Nieuw spel</button>
+    <button class="mcbtn" id="btn-help">Besturing</button>
+    <button class="mcbtn" id="btn-sound-menu">Geluid: aan</button>
+  </div>
+  <div class="rotate-hint">Tip: draai je telefoon voor het beste beeld</div>
+  <div class="home-hint hidden" id="home-hint">Volledig scherm op je iPhone: tik op <b>Deel</b> en kies <b>Zet op beginscherm</b></div>
+  <div class="menu-foot">Een blokkenavontuur &middot; Vind de portalen, versla de schurken en vind hun schatten</div>
+</div>
+
+<div id="screen-code" class="screen hidden">
+  <div class="code-panel">
+    <h1 class="logo code-logo">PORTAAL<br>JACHT</h1>
+    <div class="code-title">Voer de code in</div>
+    <div class="code-digits" id="code-digits"><span></span><span></span><span></span><span></span></div>
+    <div class="code-msg" id="code-msg"></div>
+    <div class="code-pad" id="code-pad"></div>
+  </div>
+</div>
+
+<div id="screen-help" class="screen hidden darken">
+  <h2>Besturing</h2>
+  <div class="help-cols">
+    <div class="help-col">
+      <h3>Computer</h3>
+      <p><b>WASD</b> / pijltjes &ndash; lopen</p>
+      <p><b>Muis</b> &ndash; rondkijken</p>
+      <p><b>Spatie</b> &ndash; springen / zwemmen</p>
+      <p><b>Shift</b> &ndash; rennen</p>
+      <p><b>Linkerklik</b> &ndash; slaan, ingedrukt houden = blok breken</p>
+      <p><b>Rechterklik</b> &ndash; blok bouwen</p>
+      <p><b>1&ndash;9</b> / scrollwiel &ndash; kies item</p>
+      <p><b>Boog</b>: knop ingedrukt houden en loslaten</p>
+      <p><b>Esc</b> &ndash; pauze</p>
+    </div>
+    <div class="help-col">
+      <h3>Telefoon</h3>
+      <p><b>Linkerduim</b> &ndash; lopen (helemaal naar voren = rennen)</p>
+      <p><b>Rechterduim slepen</b> &ndash; rondkijken</p>
+      <p><b>Tikken</b> &ndash; slaan</p>
+      <p><b>Vasthouden</b> of <b>SLA</b> &ndash; blok breken</p>
+      <p><b>BOUW</b> &ndash; blok bouwen</p>
+      <p><b>&#9650;</b> &ndash; springen</p>
+      <p>Tik op de balk onderin om een item te kiezen</p>
+    </div>
+  </div>
+  <div class="help-goal">
+    <p><b>Doel:</b> volg het kompas naar het portaal en stap erin. In elke wereld wacht een schurk: versla hem!
+    Daarna wijst het kompas naar zijn <b>verborgen schat</b>. Los de puzzel op om de kist te openen.
+    Met de munten en diamanten koop je bij <b>Handelaar Henk</b> betere wapens en harnassen.
+    Thuis is dan een nieuw portaal verschenen, naar een nog engere schurk.</p>
+  </div>
+  <button class="mcbtn" id="btn-help-back">Terug</button>
+</div>
+
+<div id="screen-pause" class="screen hidden darken">
+  <h2>Spel gepauzeerd</h2>
+  <div class="menu-buttons">
+    <button class="mcbtn" id="btn-resume">Verder spelen</button>
+    <button class="mcbtn" id="btn-sound">Geluid: aan</button>
+    <label class="mcslider"><span id="sens-label">Gevoeligheid: 100%</span><input type="range" id="sens" min="30" max="250" step="5" value="100"></label>
+    <button class="mcbtn" id="btn-help2">Besturing</button>
+    <button class="mcbtn" id="btn-restart">Nieuwe wereld</button>
+  </div>
+</div>
+
+<div id="screen-dead" class="screen hidden deadbg">
+  <h2 class="dead-title">Je bent doodgegaan!</h2>
+  <div id="dead-reason"></div>
+  <div class="menu-buttons">
+    <button class="mcbtn" id="btn-respawn">Opnieuw spawnen</button>
+  </div>
+</div>
+
+<div id="screen-win" class="screen hidden winbg">
+  <h2 class="win-title">OVERWINNING!</h2>
+  <div class="win-sub">Je hebt de Lavareus verslagen!</div>
+  <div id="win-stats"></div>
+  <div class="menu-buttons">
+    <button class="mcbtn" id="btn-again">Nog een keer!</button>
+    <button class="mcbtn" id="btn-explore">Blijf rondkijken</button>
+  </div>
+</div>
+
+<div id="screen-error" class="screen hidden dirt">
+  <div class="load-title">Oeps!</div>
+  <div class="load-sub" id="error-text">De 3D-motor kon niet laden. Controleer je internetverbinding en probeer het opnieuw.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>if (!window.THREE) document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>');</script>
+<script src="js/util.js"></script>
+<script src="js/textures.js"></script>
+<script src="js/blocks.js"></script>
+<script src="js/items.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/world.js"></script>
+<script src="js/gen.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/input.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/boss.js"></script>
+<script src="js/realm_nether.js"></script>
+<script src="js/realm_frost.js"></script>
+<script src="js/realm_shadow.js"></script>
+<script src="js/realm_sky.js"></script>
+<script src="js/realm_desert.js"></script>
+<script src="js/realm_jungle.js"></script>
+<script src="js/realm_ocean.js"></script>
+<script src="js/realm_spider.js"></script>
+<script src="js/realm_factory.js"></script>
+<script src="js/realm_mushroom.js"></script>
+<script src="js/realm_haunted.js"></script>
+<script src="js/realm_volcano.js"></script>
+<script src="js/realm_crystal.js"></script>
+<script src="js/realm_void.js"></script>
+<script src="js/player.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/puzzles.js"></script>
+<script src="js/shop.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
